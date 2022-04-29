@@ -1,0 +1,19 @@
+{
+    "name": "restyler/scrapeninja-api-php-client",
+    "description": "Web scraper API with proxy rotation, retries, and with Chrome TLS fingerprint emulation",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+          "ScrapeNinja\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "restyler",
+            "email": "contact@apiroad.net"
+        }
+    ]
+}
