@@ -10,6 +10,7 @@
           "ScrapeNinja\\": "src/"
         }
     },
+    "license": "MIT",
     "authors": [
         {
             "name": "restyler",
