@@ -39,18 +39,29 @@ $scraper = new Client([
 );
 
 $response = $client->scrape([
-    "url" => "https://news.ycombinator.com/", // target website URL
-    "geo" => "us", // Proxy geo. eu, br, de, fr, 4g-eu, us proxy locations are available. Default: "us"
-    "headers" => ["Some-custom-header: header1-val", "Other-header: header2-val"], // Custom headers to pass to target website. User-agent header is not required, it is attached automatically.
-    "method" => "GET" // HTTP method to use. Default: "GET". Allowed: "GET", "POST", "PUT". 
+  // target website URL
+  "url" => "https://news.ycombinator.com/", 
+  
+  // Proxy geo. eu, br, de, fr, 4g-eu, us proxy locations are available. Default: "us"
+  "geo" => "us", 
+  
+  // Custom headers to pass to target website. Space after ':' is mandatory according to HTTP spec. 
+  // User-agent header is not required, it is attached automatically.
+  "headers" => ["Some-custom-header: header1-val", "Other-header: header2-val"], 
+  
+  "method" => "GET" // HTTP method to use. Default: "GET". Allowed: "GET", "POST", "PUT". 
 ]);
 
 echo '<h2>Basic scrape response:</h2><pre>';
+
+// response contains associative array with response, with 
+// 'body'  containing target website response (as a string) and 
+// 'info' property containing all the metadata.
 echo 'HTTP Response status: ' . $response['info']['statusCode'] . "\n";
 echo 'HTTP Response status: ' . print_r($response['info']['headers'], 1) . "\n";
 echo 'HTTP Response body (truncated): ' . mb_substr($response['body'], 0, 300) . '...' . "\n";
 
-// response contains associative array with response, with 'body'  containing target website response (as a string) and 'info' property containing all the metadata.
+
 /*
     Array
 (
