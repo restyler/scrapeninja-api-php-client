@@ -130,3 +130,25 @@ $response = $client->scrape([
     ]
 ]);
 ```
+
+# Error handling
+You should definitely wrap scrape() calls into try catch handler and log your errors. RapidAPI might get down, ScrapeNinja server might get down, target website might get down. 
+- In case RapidAPI or ScrapeNinja are down, you will get Guzzle exception which treats any non-200 response from ScrapeNinja server as an unusual situation (which is good). You might get 429 error if you exceed your plan limit. 
+- In case ScrapeNinja failed to get "good" response even after 3 retries it might throw 503 error.
+
+In all these cases, it is useful to get HTTP response of a failure. 
+
+```php
+try {
+   $response = $ninja->scrape($requestOpts);
+} catch (GuzzleHttp\Exception\ClientException $e) {
+    $response = $e->getResponse();
+    
+    echo 'Status code: ' . $response->getStatusCode() . "\n";
+    echo 'Err message: ' . $e->getMessage() . "\n";
+    
+
+}
+```
+
+(see examples/ folder for full error handling example)
