@@ -3,7 +3,12 @@ This library is a thin Guzzle-based wrapper around ScrapeNinja web scraper API.
 
 
 ## What is ScrapeNinja?
-Simple & high performance scraping API which emulates Chrome TLS fingerprint, backed by rotating proxies (geos: US, EU, Brazil, France, Germany, 4g residential proxies available!). Use this when node.js/curl/python fails to load the website even with headers fully identical to Chrome, but you still need fast scraping and want to avoid using Puppeteer and JS evaluation (ScrapeNinja returns RAW HTTP responses). 
+Simple & high performance scraping API which 
+ - emulates Chrome TLS fingerprint, 
+ - backed by rotating proxies (geos: US, EU, Brazil, France, Germany, 4g residential proxies available, your own proxy can be specified as well upon request). 
+ - has smart retries and timeouts working out of the box
+
+Use this when node.js/curl/python fails to load the website even with headers fully identical to Chrome, but you still need fast scraping and want to avoid using Puppeteer and JS evaluation (ScrapeNinja returns RAW HTTP responses). 
 ScrapeNinja helps to dramatically reduce the amount of code for retrieving HTTP responses and dealing with retries, proxy handling, and timeouts.
 
 ### Read more about ScrapeNinja: 
