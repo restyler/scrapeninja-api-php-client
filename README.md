@@ -113,7 +113,7 @@ $response = $client->scrape([
 
 
 # Retries logic
-ScrapeNinja retries the request 2 times (so 3 requests in total) by default, in case of failure (target website timeout, proxy timeout).
+ScrapeNinja retries the request 2 times (so 3 requests in total) by default, in case of failure (target website timeout, proxy timeout, certain provider captcha request).
 This behaviour can be modified and disabled.
 
 ScrapeNinja can also be instructed to retry on  http response status codes and text existing in response body (useful for custom captchas)
