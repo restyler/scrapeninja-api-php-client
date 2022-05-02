@@ -19,7 +19,9 @@ try {
     ]);
     
     echo '<h2>Basic scrape response:</h2><pre>';
-    print_r($response);
+    echo 'HTTP Response status: ' . $response['info']['statusCode'] . "\n";
+    echo 'HTTP Response status: ' . print_r($response['info']['headers'], 1) . "\n";
+    echo 'HTTP Response body (truncated): ' . mb_substr($response['body'], 0, 300) . '...' . "\n";
 
     ####### RESPONSE STRUCTURE SAMPLE (JSON) ####
     /*

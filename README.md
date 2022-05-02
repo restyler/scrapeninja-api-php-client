@@ -40,24 +40,32 @@ $response = $client->scrape([
     "method" => "GET" // HTTP method to use. Default: "GET". Allowed: "GET", "POST", "PUT". 
 ]);
 
-print_r($response);
-// response now contains JSON response, with .body property containing target website response.
+echo '<h2>Basic scrape response:</h2><pre>';
+echo 'HTTP Response status: ' . $response['info']['statusCode'] . "\n";
+echo 'HTTP Response status: ' . print_r($response['info']['headers'], 1) . "\n";
+echo 'HTTP Response body (truncated): ' . mb_substr($response['body'], 0, 300) . '...' . "\n";
+
+// response contains associative array with response, with 'body'  containing target website response (as a string) and 'info' property containing all the metadata.
 /*
-    {
-        info: {
-            version: "1.1",
-            statusCode: 200,
-            statusMessage: "OK",
-            headers: {
-                server: "nginx",
-                "content-type": "text/html; charset=utf-8"
-            }
-        },
-        body: {
-            "<html lang="en" op="news"><head><meta name="referrer" content="origin"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" type="text/css" href="news.css?5eYyZbFhPFukXyt5EaSy">
-        <link rel="shortcut icon" href="favic...."
-        }
-    }
+    Array
+(
+    [info] => Array
+        (
+            [version] => 1.1 (string)
+            [statusCode] => 200 (integer)
+            [statusMessage] => OK (string)
+            [headers] => Array
+                (
+                    [server] => nginx
+                    [date] => Mon, 02 May 2022 04:38:12 GMT
+                    [content-type] => text/html; charset=utf-8
+                    [content-encoding] => gzip
+                )
+
+        )
+
+    [body] => <html lang="en" op="news"><head><meta name="referrer" content="origin"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" type="text/css" href="news.css?5eYyZbFhPFukXyt5EaSy">...
+)
     */
 ```
 
