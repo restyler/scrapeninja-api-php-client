@@ -141,6 +141,11 @@ In all these cases, it is useful to get HTTP response of a failure.
 ```php
 try {
    $response = $ninja->scrape($requestOpts);
+   
+   // you might want to add your custom errors here
+   if ($response['info']['statusCode'] != 200) {
+     throw new \Exception('your custom exception because this you didn\'t expect this from target website');
+   }
 } catch (GuzzleHttp\Exception\ClientException $e) {
     $response = $e->getResponse();
     
@@ -148,6 +153,8 @@ try {
     echo 'Err message: ' . $e->getMessage() . "\n";
     
 
+} catch (\Exception $e) {
+   // your custom error handling logic, this is a non-Guzzle error
 }
 ```
 
