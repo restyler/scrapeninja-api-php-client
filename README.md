@@ -1,20 +1,33 @@
 # ScrapeNinja Web scraper PHP API Client
-This library is a thin Guzzle-based wrapper around ScrapeNinja web scraper API.
+This library is a thin Guzzle-based wrapper around [ScrapeNinja Web Scraping API](https://scrapeninja.net/).
 
 
 ## What is ScrapeNinja?
-Simple & high performance scraping API which 
- - emulates Chrome TLS fingerprint, 
- - backed by rotating proxies (geos: US, EU, Brazil, France, Germany, 4g residential proxies available, your own proxy can be specified as well upon request). 
+Simple & high performance web scraping API which 
+ - has 2 modes of websites rendering: 
+    - `scrape()`: fast, which emulates Chrome TLS fingerprint without Puppeteer/Playwright overhead
+    - `scrapeJs()`: full fledged real Chrome with Javascript rendering and basic interaction ([clicking, filling in forms](https://scrapeninja.net/scraper-sandbox?slug=interact-click)). 
+ - is backed by rotating proxies (geos: US, EU, Brazil, France, Germany, 4g residential proxies available, your own proxy can be specified as well upon request). 
  - has smart retries and timeouts working out of the box
+ - allows to extract arbitrary data from raw HTML without dealing with PHP HTML parsing libraries: just pass `extractor` function, written in JavaScript, and it will be executed on ScrapeNinja servers. ScrapeNinja uses Cheerio which is a jQuery-like library to extract data from HTML, you can quickly build & test your extractor function in [Live Cheerio Sandbox](https://scrapeninja.net/cheerio-sandbox/), see `/examples/extractor.php` for an extractor which gets pure data from HackerNews HTML source.
 
-Use this when node.js/curl/python fails to load the website even with headers fully identical to Chrome, but you still need fast scraping and want to avoid using Puppeteer and JS evaluation (ScrapeNinja returns RAW HTTP responses). 
-ScrapeNinja helps to dramatically reduce the amount of code for retrieving HTTP responses and dealing with retries, proxy handling, and timeouts.
+## ScrapeNinja Full API Documentation
+https://rapidapi.com/restyler/api/scrapeninja
+
+## ScrapeNinja Live Sandbox
+ScrapeNinja allows you to quickly create and test your web scraper in browser: https://scrapeninja.net/scraper-sandbox
+
+
+## Use cases
+The popular use case of ScrapeNinja is when regular Guzzle/cURL fails to get the scraped website response reliably, even with headers fully identical to real browser, and gets 403 or 5xx errors instead.
+
+Another major use case is when you want to avoid Puppeteer setup and maintenance but you still need real Javascript rendering instead of sending raw network requests.
+
+ScrapeNinja helps to reduce the amount of code for retrieving HTTP responses and dealing with retries, proxy handling, and timeouts.
 
 ### Read more about ScrapeNinja: 
-https://pixeljets.com/blog/scrape-ninja-bypassing-cloudflare-403-code-1020-errors/ 
-
-
+https://pixeljets.com/blog/bypass-cloudflare/ 
+https://scrapeninja.net
 
 
 
@@ -28,13 +41,20 @@ See /examples folder for examples
 composer require restyler/scrapeninja-api-php-client
 ```
 
-# Quick example:
+# Examples:
+`/examples` folder of this repo contains quick ready-to-launch examples how ScrapeNinja can be used.
+To execute these examples in a terminal, [retrieve your API key](https://rapidapi.com/restyler/api/scrapeninja) and then set it as environment variable:
+```bash
+export SCRAPENINJA_RAPIDAPI_KEY=YOUR-KEY
+php ./examples/extractor.php 
+```
+
 ### Basic scrape request
 ```php
 use ScrapeNinja\Client;
 
 $scraper = new Client([
-        "rapidapi_key" => "YOUR-RAPID-API-KEY"
+        "rapidapi_key" => getenv('SCRAPENINJA_RAPIDAPI_KEY')
     ]
 );
 
@@ -84,6 +104,100 @@ echo 'HTTP Response body (truncated): ' . mb_substr($response['body'], 0, 300) .
 )
     */
 ```
+
+
+# Get full HTML rendered by real browser (Puppeteer) in PHP:
+```php
+$response = $client->scrapeJs([
+    "url" => "https://news.ycombinator.com/"
+]);
+```
+
+
+# Extract data from raw HTML:
+```php
+
+// javascript extractor function, executed on ScrapeNinja servers 
+$extractor = "// define function which accepts body and cheerio as args
+    function extract(input, cheerio) {
+        // return object with extracted values              
+        let $ = cheerio.load(input);
+      
+        let items = [];
+        $('.titleline').map(function() {
+                  let infoTr = $(this).closest('tr').next();
+                  let commentsLink = infoTr.find('a:contains(comments)');
+                items.push([
+                    $(this).text(),
+                      $('a', this).attr('href'),
+                      infoTr.find('.hnuser').text(),
+                      parseInt(infoTr.find('.score').text()),
+                      infoTr.find('.age').attr('title'),
+                      parseInt(commentsLink.text()),
+                      'https://news.ycombinator.com/' + commentsLink.attr('href'),
+                      new Date()
+                ]);
+            });
+      
+      return { items };
+    }";
+
+$response = $client->scrapeJs([
+    'url' => 'https://scrapeninja.net/samples/hackernews.html',
+    'extractor' => $extractor
+]);
+
+
+echo '<h2>Extractor function test:</h2><pre>';
+print_r($response['extractor']);
+```
+
+Response will contain PHP array with pure data:
+```
+(
+    [result] => Array
+        (
+            [items] => Array
+                (
+                    [0] => Array
+                        (
+                            [0] => A bug fix in the 8086 microprocessor, revealed in the die's silicon (righto.com)
+                            [1] => https://www.righto.com/2022/11/a-bug-fix-in-8086-microprocessor.html
+                            [2] => _Microft
+                            [3] => 216
+                            [4] => 2022-11-26T22:28:40
+                            [5] => 66
+                            [6] => https://news.ycombinator.com/item?id=33757484
+                            [7] => 2022-12-19T09:20:53.875Z
+                        )
+
+                    [1] => Array
+                        (
+                            [0] => Cache invalidation is one of the hardest problems in computer science (surfingcomplexity.blog)
+                            [1] => https://surfingcomplexity.blog/2022/11/25/cache-invalidation-really-is-one-of-the-hardest-things-in-computer-science/
+                            [2] => azhenley
+                            [3] => 126
+                            [4] => 2022-11-26T03:43:06
+                            [5] => 66
+                            [6] => https://news.ycombinator.com/item?id=33749677
+                            [7] => 2022-12-19T09:20:53.878Z
+                        )
+
+                    [2] => Array
+                        (
+                            [0] => FCC Bans Authorizations for Devices That Pose National Security Threat (fcc.gov)
+                            [1] => https://www.fcc.gov/document/fcc-bans-authorizations-devices-pose-national-security-threat
+                            [2] => terramex
+                            [3] => 236
+                            [4] => 2022-11-26T20:01:49
+                            [5] => 196
+                            [6] => https://news.ycombinator.com/item?id=33756089
+                            [7] => 2022-12-19T09:20:53.881Z
+                        )
+    ....
+```
+
+
 
 # Sending POST requests
 

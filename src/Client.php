@@ -35,5 +35,15 @@ class Client {
         return json_decode($response->getBody(), true);
     }
 
+    public function scrapeJs(array $params = []) {
+        if (!isset($params['url'])) {
+            throw new \Exception('params[url] is required!');
+        }
+        
+        $response = $this->guzzleClient->post('scrape-js', ['json' => $params]);
+
+        return json_decode($response->getBody(), true);
+    }
+
 
 }

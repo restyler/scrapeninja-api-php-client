@@ -5,7 +5,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use ScrapeNinja\Client;
 
 $client = new Client([
-        'rapidapi_key' => 'YOUR-API-KEY' // get your key on https://rapidapi.com/restyler/api/scrapeninja
+        'rapidapi_key' => getenv('SCRAPENINJA_RAPIDAPI_KEY') // get your key on https://rapidapi.com/restyler/api/scrapeninja
     ]
 );
 
@@ -54,7 +54,7 @@ try {
     ### sending POST request with EU proxy
     #########################
     $response = $client->scrape([
-        'url' => 'https://news.ycombinator.com/',
+        'url' => 'https://scrapeninja.net/samples/hackernews.html',
         'method' => 'POST',
         'geo' => 'eu'
     ]);
@@ -65,9 +65,24 @@ try {
 
     
     
+    #########################
+    ### sending request with full Javascript rendering
+    #########################
+    $response = $client->scrapeJs([
+        'url' => 'https://scrapeninja.net/samples/basic.html',
+        'method' => 'POST',
+        'geo' => 'us'
+    ]);
 
 
+    echo '<h2>Javascript rendering scrape response:</h2><pre>';
+    print_r($response);
 
+
+    #########################
+    ### using ScrapeNinja extractor function to extract data from HTML
+    #########################
+    // see extractor.php for extractor examples 
 
     
 
