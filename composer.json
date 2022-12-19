@@ -3,7 +3,7 @@
     "description": "Web scraper API with proxy rotation, retries, and with Chrome TLS fingerprint emulation",
     "type": "library",
     "require": {
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.5"
     },
     "autoload": {
         "psr-4": {
