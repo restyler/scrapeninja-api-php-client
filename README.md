@@ -142,6 +142,7 @@ $extractor = "// define function which accepts body and cheerio as args
       return { items };
     }";
 
+// the extractor function works identically with both scrape() and scrapeJs() ScrapeNinja rendering modes
 $response = $client->scrapeJs([
     'url' => 'https://scrapeninja.net/samples/hackernews.html',
     'extractor' => $extractor
